@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        a {
+            text-decoration: none;
+        }
+        #container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            margin: 100px auto 0 auto;
+            box-shadow: 0 0 5px #3460ab;
+            /* overflow: hidden; */
+        }
+        .wrap {
+            position: absolute;
+            z-index: 1;
+            width: 3000px;
+            height: 400px;
+        }
+        .wrap img {
+            float: left;
+            width: 600px;
+            height: 400px;
+        }
+        .btns {
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+            z-index: 2;
+            height: 20px;
+            width: 150px;
+        }
+        .btns span {
+            float: left;
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            background-color: aqua;
+            line-height: 20px;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+        }
+        .btns .on {
+            background-color: #d36236;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 180px;
+            z-index: 2;
+            display: none;
+            width: 45px;
+            height: 45px;
+            text-align: center;
+            line-height: 35px;
+            font-size: 45px;
+            font-weight: bold;
+            color: #fff;
+            background-color: rgba(0, 0, 0, .3);
+            cursor: pointer;
+        }
+        .arrow:hover {
+            background-color: rgba(0, 0, 0, .6);
+        }
+        .prev {
+            left: 20px;
+        }
+        .next {
+            right: 20px;
+        }
+
+        #container:hover .arrow {
+            display: block;
+        }
+        
+    </style>
+    <script>
+        window.onload = function() {
+            // 获取元素对象
+            var container = document.getElementById('container');
+            var wrap = document.querySelector('.wrap');
+            var btns = document.querySelectorAll('.btns span');
+            var prev = document.querySelector('.prev');
+            var next = document.querySelector('.next');
+
+            var index = 1;
+            var timer = null;
+
+            // 图片滑动
+            function animate(offset) {
+                var newLeft = parseInt(wrap.style.left) + offset + 'px';
+                wrap.style.left = newLeft; 
+            }
+            
+            // 按钮样式更新
+            function btnUpdate() {
+                for(var i = 0; i < btns.length; i++) {
+                    btns[i].className = "";
+                }
+                btns[index - 1].className = "on";
+            }
+            
+            // 左箭头
+            prev.onclick = function() {
+                index--;
+                if(index < 1) {
+                    index = 5;
+                    animate(-2400);
+                } else { 
+                    animate(600);
+                }
+                btnUpdate();
+            }
+            // 右箭头
+            next.onclick = function() {
+                index++;
+                if (index > 5) {
+                    index = 1;
+                    animate(2400);
+                } else {
+                    animate(-600);
+                }
+                btnUpdate();
+            };
+
+            function stop() {
+                clearInterval(timer);
+            }
+
+            container.onmouseover = stop;
+            container.onmouseout = play;
+
+            // 给轮播图右下角五个按钮绑定事件
+            for(var i = 0; i < btns.length; i++) {
+                (function(i) {
+                    btns[i].onclick = function() {
+                        var clickIndex = parseInt(this.innerText);
+                        var offset = 600 * (index - clickIndex);
+                        animate(offset);
+                        index = clickIndex;
+                        btnUpdate();
+                    }
+                })(i)
+            }
+
+            function play() {
+                timer = setInterval(function() {
+                    next.onclick();
+                }, 2000)
+            }
+            play();
+            
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div class="wrap" style="left: 0px">
+            <img src="img/1.jpg" alt="1"/>
+            <img src="img/2.jpg" alt="2"/>
+            <img src="img/3.jpg" alt="3"/>
+            <img src="img/4.jpg" alt="4"/>
+            <img src="img/5.jpg" alt="5"/>
+        </div>
+        <div class="btns">
+            <span class="on">1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+        </div>
+        <a href="javascript:;" class="prev arrow">&lt;</a>
+        <a href="javascript:;" class="next arrow">&gt;</a>
+    </div>
+</body>
+</html>
